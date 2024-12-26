@@ -1,0 +1,7 @@
+[project]
+name = "bdn9-3rotaryenc"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
