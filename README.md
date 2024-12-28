@@ -18,29 +18,99 @@ Order for rotary encoders is as follows:
 
 #### Layer 0 (default)
 
-| vol up / vol down // mute | down / up // home | pg down / pg up // end |
-|--|--|--|
-|red|green|blue|
+| property | Encoder 0 | Encoder 1 | Encoder 3|
+| -- | -- | -- | -- |
+| turning | vol up / down | arrow down / up | pg down / up |
+| color normally | none | none | none |
+| click   | mute | home | end |
+| click color | red while muted | flash blue | flash green |
 
-|MO(1)|F14|F15|
-|--|--|--|
-|red|green|blue|
+| property | key 0 | key 1 | key 2 |
+| -- | -- | -- | -- |
+| tapdance 1x tap | F13 | F14 | F15 |
+| color | red | green | blue |
+| tapdance 2x tap: one-shot | layer 1 | layer 2 | layer 3 |
+| color | whole layer red | whole layer green | whole layer blue |
 
-|F16|F17|F18|
-|--|--|--|
-|cyan|magenta|yellow|
+| property | key 3 | key 4 | key 5 |
+| -- | -- | -- | -- |
+| tapdance 1x tap | F16 | F17 | F18 |
+| color | cyan | magenta | yellow |
+| tapdance 2x tap: one-shot | layer 4 | layer 5 | layer 6 |
+| color | whole layer cyan | whole layer magenta | whole layer yellow |
 
 #### Layer 1 (meta functions)
 
-| vol up / vol down // mute | down / up // home | pg down / pg up // end |
-|--|--|--|
-|red|green|blue|
+* = F22 used as modifer key in this layer. F22 down will be sent, then the key mentioned, then F22 up/release will be sent.
 
-| - |F14|F15|
-|--|--|--|
-|red|green|blue|
+| property | Encoder 0 | Encoder 1 | Encoder 3|
+| -- | -- | -- | -- |
+| turning | \*F19 / \*F20 | arrow down / up | pg down / up |
+| color normally | none | none | none |
+| click   | \*F21 | home | end |
+| click color | red | flash blue | flash green |
 
-|F16|F17|F18|
-|--|--|--|
-|cyan|magenta|yellow|
+| property | key 0 | key 1 | key 2 |
+| -- | -- | -- | -- |
+| tapdance 1x tap | \*F13 | \*F14 | \*F15 |
+| color | red | green | blue |
+| tapdance 2x tap: one-shot | TO layer 0 | -- | -- |
+| color | off | whole layer green | whole layer blue |
+
+| property | key 3 | key 4 | key 5 |
+| -- | -- | -- | -- |
+| tapdance 1x tap | \*F16 | \*F17 | \*F18 |
+| color | cyan | magenta | yellow |
+| tapdance 2x tap: one-shot | -- | -- | -- |
+| color | whole layer cyan | whole layer magenta | whole layer yellow |
+
+#### Layer 2 (meta functions)
+
+@ = F23 used as modifer key in this layer. F23 down will be sent, then the key mentioned, then F23 up/release will be sent.
+
+| property | Encoder 0 | Encoder 1 | Encoder 3|
+| -- | -- | -- | -- |
+| turning | @F19 / @F20 | arrow down / up | pg down / up |
+| color normally | none | none | none |
+| click   | @F21 | home | end |
+| click color | red | flash blue | flash green |
+
+| property | key 0 | key 1 | key 2 |
+| -- | -- | -- | -- |
+| tapdance 1x tap | @F13 | @F14 | @F15 |
+| color | red | green | blue |
+| tapdance 2x tap: one-shot | -- | TO layer 0 | -- |
+| color | whole layer red | off | whole layer blue |
+
+| property | key 3 | key 4 | key 5 |
+| -- | -- | -- | -- |
+| tapdance 1x tap | @F16 | @F17 | @F18 |
+| color | cyan | magenta | yellow |
+| tapdance 2x tap: one-shot | -- | -- | -- |
+| color | whole layer cyan | whole layer magenta | whole layer yellow |
+
+#### Layer 3 (meta functions)
+
+& = F24 used as modifer key in this layer. F24 down will be sent, then the key mentioned, then F24 up/release will be sent.
+
+| property | Encoder 0 | Encoder 1 | Encoder 3|
+| -- | -- | -- | -- |
+| turning | &F19 / &F20 | arrow down / up | pg down / up |
+| color normally | none | none | none |
+| click   | &F21 | home | end |
+| click color | red | flash blue | flash green |
+
+| property | key 0 | key 1 | key 2 |
+| -- | -- | -- | -- |
+| tapdance 1x tap | &F13 | &F14 | &F15 |
+| color | red | green | blue |
+| tapdance 2x tap: one-shot | -- | -- | layer 0 |
+| color | whole layer red | whole layer green | off |
+
+| property | key 3 | key 4 | key 5 |
+| -- | -- | -- | -- |
+| tapdance 1x tap | &F16 | &F17 | &F18 |
+| color | cyan | magenta | yellow |
+| tapdance 2x tap: one-shot | -- | -- | -- |
+| color | whole layer cyan | whole layer magenta | whole layer yellow |
 
