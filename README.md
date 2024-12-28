@@ -14,7 +14,7 @@ This is a repo for the configuration of the firmware for a [keeb.io BDN9 Revisio
 
 Order for rotary encoders is as follows:
 
-`clockwise action / counter-clockwise action // click action`
+`clockwise action / counter-clockwise action`
 
 #### Layer 0 (default)
 
