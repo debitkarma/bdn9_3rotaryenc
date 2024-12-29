@@ -104,7 +104,7 @@ Order for rotary encoders is as follows:
 | -- | -- | -- | -- |
 | tapdance 1x tap | &F13 | &F14 | &F15 |
 | color | red | green | blue |
-| tapdance 2x tap: one-shot | -- | -- | layer 0 |
+| tapdance 2x tap: one-shot | -- | -- | TO layer 0 |
 | color | whole layer red | whole layer green | off |
 
 | property | key 3 | key 4 | key 5 |
