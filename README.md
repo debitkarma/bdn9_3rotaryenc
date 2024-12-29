@@ -4,7 +4,7 @@ This is a repo for the configuration of the firmware for a [keeb.io BDN9 Revisio
 
 ### Physical Layout
 
-| rotary encoder 1 | rotary encoder 2 | rotary encoder 3 |
+| rotary encoder 0 | rotary encoder 1 | rotary encoder 2 |
 |------------------|------------------|------------------|
 | kailh silver     | kailh red        | kailh black      |
 | kailh blue       | kailh green      | kailh white      |
