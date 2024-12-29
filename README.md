@@ -18,7 +18,7 @@ Order for rotary encoders is as follows:
 
 #### Layer 0 (default)
 
-| property | Encoder 0 | Encoder 1 | Encoder 3|
+| property | Encoder 0 | Encoder 1 | Encoder 2 |
 | -- | -- | -- | -- |
 | turning | vol up / down | arrow down / up | pg down / up |
 | color normally | none | none | none |
@@ -41,9 +41,9 @@ Order for rotary encoders is as follows:
 
 #### Layer 1 (meta functions)
 
-* = F22 used as modifer key in this layer. F22 down will be sent, then the key mentioned, then F22 up/release will be sent.
+\* = F22 used as modifer key in this layer. F22 down will be sent, then the key mentioned, then F22 up/release will be sent.
 
-| property | Encoder 0 | Encoder 1 | Encoder 3|
+| property | Encoder 0 | Encoder 1 | Encoder 2 |
 | -- | -- | -- | -- |
 | turning | \*F19 / \*F20 | arrow down / up | pg down / up |
 | color normally | none | none | none |
@@ -68,7 +68,7 @@ Order for rotary encoders is as follows:
 
 @ = F23 used as modifer key in this layer. F23 down will be sent, then the key mentioned, then F23 up/release will be sent.
 
-| property | Encoder 0 | Encoder 1 | Encoder 3|
+| property | Encoder 0 | Encoder 1 | Encoder 2 |
 | -- | -- | -- | -- |
 | turning | @F19 / @F20 | arrow down / up | pg down / up |
 | color normally | none | none | none |
@@ -93,7 +93,7 @@ Order for rotary encoders is as follows:
 
 & = F24 used as modifer key in this layer. F24 down will be sent, then the key mentioned, then F24 up/release will be sent.
 
-| property | Encoder 0 | Encoder 1 | Encoder 3|
+| property | Encoder 0 | Encoder 1 | Encoder 2 |
 | -- | -- | -- | -- |
 | turning | &F19 / &F20 | arrow down / up | pg down / up |
 | color normally | none | none | none |
