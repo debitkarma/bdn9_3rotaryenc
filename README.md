@@ -45,9 +45,9 @@ Order for rotary encoders is as follows:
 
 | property | Encoder 0 | Encoder 1 | Encoder 2 |
 | -- | -- | -- | -- |
-| turning | \*F19 / \*F20 | arrow down / up | pg down / up |
+| turning | \*F19 / \*F20 | \*1 / \*2 | \*4 / \*5 |
 | color normally | none | none | none |
-| click   | \*F21 | home | end |
+| click   | \*F21 | \*3 | \*6 |
 | click color | red | flash blue | flash green |
 
 | property | key 0 | key 1 | key 2 |
@@ -70,9 +70,9 @@ Order for rotary encoders is as follows:
 
 | property | Encoder 0 | Encoder 1 | Encoder 2 |
 | -- | -- | -- | -- |
-| turning | @F19 / @F20 | arrow down / up | pg down / up |
+| turning | @F19 / @F20 | @1 / @2 | @4 / @5 |
 | color normally | none | none | none |
-| click   | @F21 | home | end |
+| click   | @F21 | @3 | @6 |
 | click color | red | flash blue | flash green |
 
 | property | key 0 | key 1 | key 2 |
@@ -95,9 +95,9 @@ Order for rotary encoders is as follows:
 
 | property | Encoder 0 | Encoder 1 | Encoder 2 |
 | -- | -- | -- | -- |
-| turning | &F19 / &F20 | arrow down / up | pg down / up |
+| turning | &F19 / &F20 | &1 / &2 | &4 / &5 |
 | color normally | none | none | none |
-| click   | &F21 | home | end |
+| click   | &F21 | &3 | &6 |
 | click color | red | flash blue | flash green |
 
 | property | key 0 | key 1 | key 2 |
