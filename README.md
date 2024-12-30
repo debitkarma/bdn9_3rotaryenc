@@ -114,3 +114,15 @@ Order for rotary encoders is as follows:
 | tapdance 2x tap: one-shot | -- | -- | -- |
 | color | whole layer cyan | whole layer magenta | whole layer yellow |
 
+## TO DO
+
+* Add tap dancing ability
+* Tap dancing routes to other layers
+* Cancel layer back to 0
+* Create function (if possible) to wrap keycodes in another F key
+* Add per key lighting for layer 0
+* Add lighting toggle for Volume/Mute
+* Add per-layer lighting for other layers
+* Create AutoHotKey script for handling of all the keys
+* Look into 2-way comm to board to sync status of mute to the LED
+* Consider adding layers 4-6
