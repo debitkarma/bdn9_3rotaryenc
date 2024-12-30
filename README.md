@@ -126,3 +126,39 @@ Order for rotary encoders is as follows:
 * Create AutoHotKey script for handling of all the keys
 * Look into 2-way comm to board to sync status of mute to the LED
 * Consider adding layers 4-6
+
+## Thoughts
+
+#### Wrapping
+Use `process_record_user()` and `post_process_record_user()` functions to wrap inputs in F22, F23, or F24 keys.
+
+1. `process_record_user()` checks for input and which layer is active
+1. Based on which layer is active, sets a flag
+1. Wraps the keycode and sends it
+1. `post_process_record_user()` unsets the wrapping key
+1. Returns to layer 0? Perhaps we want multiple inputs so we don't reset the layer back to 0?
+
+#### Lighting
+* Split lighting logic into another file and `#include`?
+* Handle logic for checking which layer is active and what color the lights are
+
+#### Input Handling in AHK
+* AHK should handle F22/F23/F24 wrapped keys.
+* AHK should basically pass custom shortcuts to specific applications:
+  * OBS (scene changes, mic adjustments, alert handling)
+  * Windows (volume)
+  * Discord (volume)
+  * Emulation ?
+* AHK should handle `F22 down, F22 up, _____, F23 down, F23 up` as a sequence (used on the planck ez glow temporarily
+
+# Resource Links
+
+* [Macro instructions, with complex examples](https://docs.qmk.fm/feature_macros)
+* [Rotary Encoder definitions](https://docs.qmk.fm/features/encoders)
+* [Tap Dance functionality](https://docs.qmk.fm/features/tap_dance)
+* ["Extra" keycodes for macro use](https://www.reddit.com/r/olkb/comments/6yxgcd/qmkcreating_a_keymap_for_use_as_macro_keyboard/)
+* [Full list of keycodes available in QMK](https://docs.qmk.fm/keycodes)
+* [Official Keebio BDN9 Rev2 build instructions](https://github.com/qmk/qmk_firmware/tree/master/keyboards/keebio/bdn9)
+* [Instructions to use Make with qmk building](https://docs.qmk.fm/getting_started_make_guide)
+* [Leader key instructions](https://docs.qmk.fm/features/leader_key)
+* [Feature layers docs](https://docs.qmk.fm/feature_layers)
