@@ -138,6 +138,14 @@ Use `process_record_user()` and `post_process_record_user()` functions to wrap i
 1. `post_process_record_user()` unsets the wrapping key
 1. Returns to layer 0? Perhaps we want multiple inputs so we don't reset the layer back to 0?
 
+TRY:
+* `unregister_code` for the release of the wrapping key, without using post process
+* try using `tap_keycode` for the actual tapped key
+* try abstracting the wrapping to a generic function that takes a keycode
+* check `switch / case` statements and add the rotary encoder keycodes (for non-0 layers)
+* use custom keycodes for the non-0 layer rotary encoders for easier handling
+* try using rotary encoder to cycle through the layers?
+
 #### Lighting
 * Split lighting logic into another file and `#include`?
 * Handle logic for checking which layer is active and what color the lights are
@@ -153,6 +161,10 @@ Use `process_record_user()` and `post_process_record_user()` functions to wrap i
 
 # Resource Links
 
+* [Macro guide explaining with custom code: part 1, macros](https://getreuer.info/posts/keyboards/macros/index.html)
+* [Macro guide explaining with custom code: part 2, triggers](https://getreuer.info/posts/keyboards/triggers/index.html)
+* [Macro guide explaining with custom code: part 3, advanced effects](https://getreuer.info/posts/keyboards/macros3/index.html)
+* [Lighting Layers docs](https://docs.qmk.fm/features/rgblight#lighting-layers)
 * [Macro instructions, with complex examples](https://docs.qmk.fm/feature_macros)
 * [Rotary Encoder definitions](https://docs.qmk.fm/features/encoders)
 * [Tap Dance functionality](https://docs.qmk.fm/features/tap_dance)
