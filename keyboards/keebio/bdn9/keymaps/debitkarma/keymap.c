@@ -106,7 +106,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
             register_code(KC_F24);
             f24_tracker++;
-            register_code(keycode);
+            tap_code(keycode);
             return false;
             }
             break;
@@ -114,7 +114,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
             register_code(KC_F23);
             f23_tracker++;
-            register_code(keycode);
+            tap_code(keycode);
             return false;
             }
             break;
@@ -122,7 +122,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
             register_code(KC_F22);
             f22_tracker++;
-            register_code(keycode);
+            tap_code(keycode);
             return false;
             }
             break;
@@ -134,7 +134,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
 	switch (keycode) {
     case KC_F13 ... KC_F21:
-        switch (get_highest_layer(state)) {
+        uint8_t layer = read_source_layers_cache(record->event.key);
+        switch (layer) {
         case 3:
             if (!record->event.pressed) {
                 f24_tracker--;

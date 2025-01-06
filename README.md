@@ -129,6 +129,28 @@ Order for rotary encoders is as follows:
 
 ## Thoughts
 
+#### QMK Commands
+
+To build:
+
+```
+cd ~/qmk_firmware
+make keebio/bdn9/rev2:debitkarma
+```
+OR
+```
+qmk compile -kb keebio/bdn9/rev2 -km debitkarma
+```
+
+To flash:
+```
+qmk flash -kb keebio/bdn9/rev2 -km debitkarma
+```
+
+* [BDN9 GH issue with example output](https://github.com/qmk/qmk_firmware/issues/11265)
+* [Frosty Flake compile/flash instructions, for comparison](https://github.com/qmk/qmk_firmware/blob/master/keyboards/bpiphany/frosty_flake/readme.md)
+* [`make` instructions from official docs](https://docs.qmk.fm/getting_started_make_guide)
+
 #### Wrapping
 Use `process_record_user()` and `post_process_record_user()` functions to wrap inputs in F22, F23, or F24 keys.
 
