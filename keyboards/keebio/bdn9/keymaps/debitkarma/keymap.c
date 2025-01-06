@@ -14,9 +14,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
-static uint8 f22_tracker;
-static uint8 f23_tracker;
-static uint8 f24_tracker;
 
 enum encoder_names {
   _LEFT,
@@ -93,95 +90,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_F16 , KC_F17 , KC_F18
     ),
 };
-
-// F-key wrapping functionality
-// On key down
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    switch (keycode) {
-    case KC_F13 ... KC_F21:
-        // grab layer from the key event
-        uint8_t layer = read_source_layers_cache(record->event.key);
-        switch (layer) {
-        case 3:
-            if (record->event.pressed) {
-            register_code(KC_F24);
-            f24_tracker++;
-            tap_code(keycode);
-            return false;
-            }
-            break;
-        case 2:
-            if (record->event.pressed) {
-            register_code(KC_F23);
-            f23_tracker++;
-            tap_code(keycode);
-            return false;
-            }
-            break;
-        case 1:
-            if (record->event.pressed) {
-            register_code(KC_F22);
-            f22_tracker++;
-            tap_code(keycode);
-            return false;
-            }
-            break;
-        }
-    }
-    return true;
-};
-// For key up
-void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
-	switch (keycode) {
-    case KC_F13 ... KC_F21:
-        uint8_t layer = read_source_layers_cache(record->event.key);
-        switch (layer) {
-        case 3:
-            if (!record->event.pressed) {
-                f24_tracker--;
-                if (!f24_tracker) {
-                    unregister_code(KC_F24);
-                }
-            }
-            break;
-        case 2:
-            if (!record->event.pressed) {
-                f23_tracker--;
-                if (!f23_tracker) {
-                    unregister_code(KC_F23);
-                }
-            }
-            break;
-        case 1:
-            if (!record->event.pressed) {
-                f22_tracker--;
-                if (!f22_tracker) {
-                    unregister_code(KC_F22);
-                }
-            }
-            break;
-        }
-    }
-}
-
-// RGB underglow for layer state
-layer_state_t layer_state_set_user(layer_state_t state) {
-    switch (get_highest_layer(state)) {
-    case 3:
-        rgblight_setrgb (0xFF,  0x00, 0xAC);
-        break;
-    case 2:
-        rgblight_setrgb (0xAC,  0xFF, 0x00);
-        break;
-    case 1:
-        rgblight_setrgb (0x00,  0xAC, 0xFF);
-        break;
-    default: //  for any other layers, or the default layer
-        rgblight_setrgb (0xFF,  0xFF, 0xFF);
-        break;
-    }
-  return state;
-}
 
 // Blocking out original encoder functionality
 // Keeping it for reference
