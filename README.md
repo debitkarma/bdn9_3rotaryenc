@@ -171,6 +171,8 @@ TRY:
 #### Lighting
 * Split lighting logic into another file and `#include`?
 * Handle logic for checking which layer is active and what color the lights are
+* qmk functions should be using `rgb_matrix_*` functions (NOT `rgb_light_*` functions, even for the backlight)
+* LEDS are in a single matrix, addressed as 0-8 for the face keys, and 9, 10 for the underlighting
 
 #### Input Handling in AHK
 * AHK should handle F22/F23/F24 wrapped keys.
