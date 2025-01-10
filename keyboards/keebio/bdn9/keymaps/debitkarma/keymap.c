@@ -14,9 +14,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
-static uint8 f22_tracker;
-static uint8 f23_tracker;
-static uint8 f24_tracker;
+static uint8_t f22_tracker;
+static uint8_t f23_tracker;
+static uint8_t f24_tracker;
 
 enum encoder_names {
   _LEFT,
@@ -164,20 +164,36 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
+// Used this for testing the individual LEDs in the matrix
+/*
+bool rgb_matrix_indicators_kb(void) {
+    if (!rgb_matrix_indicators_user()) {
+        return false;
+    }
+    rgb_matrix_set_color_all(255,0,0);
+    rgb_matrix_set_color(9, 0, 0, 255);
+    rgb_matrix_set_color(10, 0, 255, 0);
+    return true;
+}
+*/
+
+
 // RGB underglow for layer state
 layer_state_t layer_state_set_user(layer_state_t state) {
     switch (get_highest_layer(state)) {
     case 3:
-        rgblight_setrgb (0xFF,  0x00, 0xAC);
+        rgb_matrix_set_color_all (0xFF,  0x00, 0xAC);
         break;
     case 2:
-        rgblight_setrgb (0xAC,  0xFF, 0x00);
+        rgb_matrix_set_color_all (0xAC,  0xFF, 0x00);
         break;
     case 1:
-        rgblight_setrgb (0x00,  0xAC, 0xFF);
+        rgb_matrix_set_color_all (0x00,  0xAC, 0xFF);
         break;
     default: //  for any other layers, or the default layer
-        rgblight_setrgb (0xFF,  0xFF, 0xFF);
+        rgb_matrix_set_color_all (0xFF,  0xFF, 0xFF);
+        //override for the underglow
+        rbg_matrix_
         break;
     }
   return state;
