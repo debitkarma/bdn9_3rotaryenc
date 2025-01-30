@@ -24,6 +24,16 @@ enum encoder_names {
   _MIDDLE,
 };
 
+enum tap_dance_funcs {
+  TD_L1 = 0,
+  TD_L2,
+  TD_L3,
+  L1_RESET,
+  L2_RESET,
+  L3_RESET,
+  TD_RESET
+}
+
 // "ENCODER_MAP_ENABLE = yes" -> rules.mk
 // This allows for per-layer encoder definitions
 #if defined(ENCODER_MAP_ENABLE)
@@ -58,9 +68,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         |  F16           | F17         | F18          |
      */
     [0] = LAYOUT(
-        KC_MUTE, KC_HOME, KC_END,
-        KC_F13 , KC_F14 , KC_F15,
-        KC_F16 , KC_F17 , KC_F18
+        KC_MUTE  , KC_HOME  , KC_END,
+        TD(TO_L1), TD(TO_L2), TD(TO_L3),
+        KC_F16   , KC_F17   , KC_F18
     ),
     /*
         | Press: F21     | Press: 3     | Press: 6     |
@@ -68,9 +78,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         |  F16           | F17          | F18          |
      */
     [1] = LAYOUT(
-        KC_F21 , KC_3  , KC_6  ,
-        KC_F13 , KC_F14 , KC_F15,
-        KC_F16 , KC_F17 , KC_F18
+        KC_F21       , KC_3   , KC_6  ,
+        TD(L1_RESET) , KC_F14 , KC_F15,
+        KC_F16       , KC_F17 , KC_F18
     ),
     /*
         | Press: F21     | Press: 3     | Press: 6     |
@@ -78,9 +88,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         |  F16           | F17          | F18          |
      */
     [2] = LAYOUT(
-        KC_F21 , KC_3  , KC_6  ,
-        KC_F13 , KC_F14 , KC_F15,
-        KC_F16 , KC_F17 , KC_F18
+        KC_F21 , KC_3         , KC_6  ,
+        KC_F13 , TD(L2_RESET) , KC_F15,
+        KC_F16 , KC_F17       , KC_F18
     ),
     /*
         | Press: F21     | Press: 3     | Press: 6     |
@@ -88,8 +98,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         |  F16           | F17          | F18          |
      */
     [3] = LAYOUT(
-        KC_F21 , KC_3  , KC_6  ,
-        KC_F13 , KC_F14 , KC_F15,
+        KC_F21 , KC_3   , KC_6  ,
+        KC_F13 , KC_F14 , TD(L3_RESET),
         KC_F16 , KC_F17 , KC_F18
     ),
 };
@@ -199,7 +209,26 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         break;
     }
   return state;
+};
+
+// Reset to zero whenever tapping a lot in a row
+void reset_to_zero(qk_tap_dance_state_t *state, void *user_data) {
+  if (state->count >= 3) {
+    // Reset the keyboard to Layer 0 if more than 3 taps happen on a tapdance key
+    reset_tap_dance(state);
+  }
 }
+
+// Tap Dance functions
+qk_tap_dance_action_t tap_dance_actions[] = {
+  [TO_L1] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F13, 1),
+  [TO_L2] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F14, 2),
+  [TO_L3] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F15, 3),
+  [L1_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F13, 0),
+  [L2_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F14, 0),
+  [L3_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F15, 0),
+  [TD_RESET] = ACTION_TAP_DANCE_FN(reset_to_zero)
+};
 
 // Blocking out original encoder functionality
 // Keeping it for reference
