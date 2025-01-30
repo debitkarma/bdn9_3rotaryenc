@@ -231,25 +231,6 @@ layer_state_t layer_state_set_user(layer_state_t state) {
   return state;
 };
 
-// Reset to zero whenever tapping a lot in a row
-/*void reset_to_zero(tap_dance_state_t *state, void *user_data) {
-  if (state->count >= 3) {
-    // Reset the keyboard to Layer 0 if more than 3 taps happen on a tapdance key
-    reset_tap_dance(state);
-  }
-}*/
-
-// Tap Dance functions
-/*qk_tap_dance_action_t tap_dance_actions[] = {
-  [TO_L1] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F13, 1),
-  [TO_L2] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F14, 2),
-  [TO_L3] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F15, 3),
-  [L1_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F13, 0),
-  [L2_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F14, 0),
-  [L3_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F15, 0),
-  [TD_RESET] = ACTION_TAP_DANCE_FN(reset_to_zero)
-};*/
-
 // Blocking out original encoder functionality
 // Keeping it for reference
 /*
