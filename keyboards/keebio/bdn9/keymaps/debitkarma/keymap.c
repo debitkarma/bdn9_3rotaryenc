@@ -24,15 +24,15 @@ enum encoder_names {
   _MIDDLE,
 };
 
-enum tap_dance_funcs {
-  TD_L1 = 0,
+enum {
+  TD_L1,
   TD_L2,
   TD_L3,
   L1_RESET,
   L2_RESET,
   L3_RESET,
   TD_RESET
-}
+};
 
 // "ENCODER_MAP_ENABLE = yes" -> rules.mk
 // This allows for per-layer encoder definitions
@@ -61,6 +61,26 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 };
 #endif
 
+// Reset to zero whenever tapping a lot in a row
+void reset_to_zero(tap_dance_state_t *state, void *user_data) {
+  if (state->count >= 3) {
+    // Reset the keyboard to Layer 0 if more than 3 taps happen on a tapdance key
+    reset_tap_dance(state);
+  }
+}
+
+// Tap Dance functions
+// defining tap dance actions prior to keymap
+tap_dance_action_t tap_dance_actions[] = {
+  [TD_L1] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F13, 1),
+  [TD_L2] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F14, 2),
+  [TD_L3] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F15, 3),
+  [L1_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F13, 0),
+  [L2_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F14, 0),
+  [L3_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F15, 0),
+  [TD_RESET] = ACTION_TAP_DANCE_FN(reset_to_zero)
+};
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /*
         | Press: Mute    | Press: Home | Press: End   |
@@ -69,7 +89,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      */
     [0] = LAYOUT(
         KC_MUTE  , KC_HOME  , KC_END,
-        TD(TO_L1), TD(TO_L2), TD(TO_L3),
+        TD(TD_L1), TD(TD_L2), TD(TD_L3),
         KC_F16   , KC_F17   , KC_F18
     ),
     /*
@@ -212,15 +232,15 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 };
 
 // Reset to zero whenever tapping a lot in a row
-void reset_to_zero(qk_tap_dance_state_t *state, void *user_data) {
+/*void reset_to_zero(tap_dance_state_t *state, void *user_data) {
   if (state->count >= 3) {
     // Reset the keyboard to Layer 0 if more than 3 taps happen on a tapdance key
     reset_tap_dance(state);
   }
-}
+}*/
 
 // Tap Dance functions
-qk_tap_dance_action_t tap_dance_actions[] = {
+/*qk_tap_dance_action_t tap_dance_actions[] = {
   [TO_L1] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F13, 1),
   [TO_L2] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F14, 2),
   [TO_L3] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F15, 3),
@@ -228,7 +248,7 @@ qk_tap_dance_action_t tap_dance_actions[] = {
   [L2_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F14, 0),
   [L3_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F15, 0),
   [TD_RESET] = ACTION_TAP_DANCE_FN(reset_to_zero)
-};
+};*/
 
 // Blocking out original encoder functionality
 // Keeping it for reference
