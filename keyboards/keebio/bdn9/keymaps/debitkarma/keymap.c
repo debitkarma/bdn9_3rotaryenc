@@ -221,8 +221,8 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         rgb_matrix_set_color_all (0x00,  0xAC, 0xFF);
         break;
     default: //  for any other layers, or the default layer
-        //rgb_matrix_set_color_all (0xFF,  0xFF, 0xFF);
-	rgb_matrix_mode(RGB_MATRIX_CYCLE_ALL);
+        rgb_matrix_set_color_all (0xFF,  0xFF, 0xFF);
+	//rgb_matrix_mode(RGB_MATRIX_CYCLE_ALL);
         //override for the underglow
         rgb_matrix_set_color(9, 0x00, 0xFF, 0x00);
         rgb_matrix_set_color(10, 0x00, 0x00, 0xFF);

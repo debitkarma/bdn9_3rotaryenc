@@ -4,7 +4,9 @@
 #    define RGB_MATRIX_KEYPRESSES
 #endif
 
+#define ENCODER_DIRECTION_FLIP // required for the low profile encoders I use
 #define ENCODER_RESOLUTION 2
+#define TAPPING_TERM 500 // 200 normally, 500 for testing
 
 #undef RGBLIGHT_MODE_RAINBOW_SWIRL
 #undef RGBLIGHT_MODE_SNAKE
