@@ -1,0 +1,20 @@
+#pragma once
+
+#ifdef RGB_MATRIX_ENABLE
+#    define RGB_MATRIX_KEYPRESSES
+#endif
+
+#define ENCODER_DIRECTION_FLIP // required for the low profile encoders I use
+#define ENCODER_RESOLUTION 2
+#define TAPPING_TERM 500 // 200 normally, 500 for testing
+
+#undef RGBLIGHT_MODE_RAINBOW_SWIRL
+#undef RGBLIGHT_MODE_SNAKE
+#undef RGBLIGHT_MODE_KNIGHT
+#undef RGBLIGHT_MODE_CHRISTMAS
+#undef RGBLIGHT_MODE_STATIC_GRADIENT
+#undef RGBLIGHT_MODE_TWINKLE
+
+#define RGBLIGHT_LAYERS
+
+//#define RGBLIGHT_LAYERS_RETAIN_VAL
