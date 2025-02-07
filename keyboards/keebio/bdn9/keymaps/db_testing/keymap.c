@@ -136,7 +136,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         case 1:
             if (record->event.pressed) {
-            register_code(KC_F1);
+            register_code(KC_9);
             f22_tracker++;
             tap_code(keycode);
             return false;
@@ -172,7 +172,7 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (!record->event.pressed) {
                 f22_tracker--;
                 if (!f22_tracker) {
-                    unregister_code(KC_F1);
+                    unregister_code(KC_9);
                 }
             }
             break;
