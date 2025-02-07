@@ -13,6 +13,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+ /* This keymap is a test that uses simple key assignments
+  * to test the functionality of our Tap Dance actions,
+  * layers, RGB lighting, and the keystroke wrapping.
+  * This is not for actual use alongside a keyboard!!!
+ */
 #include QMK_KEYBOARD_H
 static uint8_t f22_tracker;
 static uint8_t f23_tracker;
@@ -44,19 +50,19 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
         ENCODER_CCW_CW(MS_WHLU, MS_WHLD),
     },
     [1] = {
-        ENCODER_CCW_CW(KC_F19, KC_F20),
-        ENCODER_CCW_CW(KC_1, KC_2),
-        ENCODER_CCW_CW(KC_4, KC_5),
+        ENCODER_CCW_CW(KC_MINUS, KC_EQUAL),
+        ENCODER_CCW_CW(KC_MINUS, KC_EQUAL),
+        ENCODER_CCW_CW(KC_MINUS, KC_EQUAL),
     },
     [2] = {
-        ENCODER_CCW_CW(KC_F19, KC_F20),
-        ENCODER_CCW_CW(KC_1, KC_2),
-        ENCODER_CCW_CW(KC_4, KC_5),
+        ENCODER_CCW_CW(KC_LBRC, KC_RBRC),
+        ENCODER_CCW_CW(KC_LBRC, KC_RBRC),
+        ENCODER_CCW_CW(KC_LBRC, KC_RBRC),
     },
     [3] = {
-        ENCODER_CCW_CW(KC_F19, KC_F20),
-        ENCODER_CCW_CW(KC_1, KC_2),
-        ENCODER_CCW_CW(KC_4, KC_5),
+        ENCODER_CCW_CW(KC_QUOT, KC_COMM),
+        ENCODER_CCW_CW(KC_QUOT, KC_COMM),
+        ENCODER_CCW_CW(KC_QUOT, KC_COMM),
     },
 };
 #endif
@@ -72,55 +78,35 @@ void reset_to_zero(tap_dance_state_t *state, void *user_data) {
 // Tap Dance functions
 // defining tap dance actions prior to keymap
 tap_dance_action_t tap_dance_actions[] = {
-  [TD_L1] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F13, 1),
-  [TD_L2] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F14, 2),
-  [TD_L3] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F15, 3),
-  [L1_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F13, 0),
-  [L2_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F14, 0),
-  [L3_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_F15, 0),
+  [TD_L1] = ACTION_TAP_DANCE_LAYER_MOVE(KC_S, 1),
+  [TD_L2] = ACTION_TAP_DANCE_LAYER_MOVE(KC_T, 2),
+  [TD_L3] = ACTION_TAP_DANCE_LAYER_MOVE(KC_U, 3),
+  [L1_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_A, 0),
+  [L2_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_H, 0),
+  [L3_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_O, 0),
   [TD_RESET] = ACTION_TAP_DANCE_FN(reset_to_zero)
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-    /*
-        | Press: Mute    | Press: Home | Press: End   |
-        |  F13           | F14         | F15          |
-        |  F16           | F17         | F18          |
-     */
     [0] = LAYOUT(
         KC_MUTE  , KC_HOME  , KC_END,
         TD(TD_L1), TD(TD_L2), TD(TD_L3),
-        KC_F16   , KC_F17   , KC_F18
+        KC_V     , KC_W     , KC_X
     ),
-    /*
-        | Press: F21     | Press: 3     | Press: 6     |
-        |  F13           | F14          | F15          |
-        |  F16           | F17          | F18          |
-     */
     [1] = LAYOUT(
-        KC_F21       , KC_3   , KC_6  ,
-        TD(L1_RESET) , KC_F14 , KC_F15,
-        KC_F16       , KC_F17 , KC_F18
+        KC_SPC       , KC_SPC   , KC_SPC,
+        TD(L1_RESET) , KC_B     , KC_C,
+        KC_D         , KC_E     , KC_F
     ),
-    /*
-        | Press: F21     | Press: 3     | Press: 6     |
-        |  F13           | F14          | F15          |
-        |  F16           | F17          | F18          |
-     */
     [2] = LAYOUT(
-        KC_F21 , KC_3         , KC_6  ,
-        KC_F13 , TD(L2_RESET) , KC_F15,
-        KC_F16 , KC_F17       , KC_F18
+        KC_BSLS , KC_BSLS         , KC_BSLS  ,
+        KC_G    , TD(L2_RESET)    , KC_I,
+        KC_J    , KC_K            , KC_L
     ),
-    /*
-        | Press: F21     | Press: 3     | Press: 6     |
-        |  F13           | F14          | F15          |
-        |  F16           | F17          | F18          |
-     */
     [3] = LAYOUT(
-        KC_F21 , KC_3   , KC_6  ,
-        KC_F13 , KC_F14 , TD(L3_RESET),
-        KC_F16 , KC_F17 , KC_F18
+        KC_SCLN , KC_SCLN   , KC_SCLN  ,
+        KC_M    , KC_N      , TD(L3_RESET),
+        KC_P    , KC_Q      , KC_R
     ),
 };
 
@@ -128,13 +114,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // On key down
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-    case KC_F13 ... KC_F21:
+    case KC_A ... KC_F1:
         // grab layer from the key event
         uint8_t layer = read_source_layers_cache(record->event.key);
         switch (layer) {
         case 3:
             if (record->event.pressed) {
-            register_code(KC_F24);
+            register_code(KC_Y);
             f24_tracker++;
             tap_code(keycode);
             return false;
@@ -142,7 +128,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         case 2:
             if (record->event.pressed) {
-            register_code(KC_F23);
+            register_code(KC_Z);
             f23_tracker++;
             tap_code(keycode);
             return false;
@@ -150,7 +136,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         case 1:
             if (record->event.pressed) {
-            register_code(KC_F22);
+            register_code(KC_F1);
             f22_tracker++;
             tap_code(keycode);
             return false;
@@ -170,7 +156,7 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (!record->event.pressed) {
                 f24_tracker--;
                 if (!f24_tracker) {
-                    unregister_code(KC_F24);
+                    unregister_code(KC_Y);
                 }
             }
             break;
@@ -178,7 +164,7 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (!record->event.pressed) {
                 f23_tracker--;
                 if (!f23_tracker) {
-                    unregister_code(KC_F23);
+                    unregister_code(KC_Z);
                 }
             }
             break;
@@ -186,7 +172,7 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (!record->event.pressed) {
                 f22_tracker--;
                 if (!f22_tracker) {
-                    unregister_code(KC_F22);
+                    unregister_code(KC_F1);
                 }
             }
             break;
@@ -212,20 +198,20 @@ bool rgb_matrix_indicators_kb(void) {
 layer_state_t layer_state_set_user(layer_state_t state) {
     switch (get_highest_layer(state)) {
     case 3:
-        rgb_matrix_set_color_all (0xFF,  0x00, 0xAC);
+        rgb_matrix_set_color_all (0x00,  0x00, 0xFF);
         break;
     case 2:
-        rgb_matrix_set_color_all (0xAC,  0xFF, 0x00);
+        rgb_matrix_set_color_all (0x00,  0xFF, 0x00);
         break;
     case 1:
-        rgb_matrix_set_color_all (0x00,  0xAC, 0xFF);
+        rgb_matrix_set_color_all (0xFF,  0x00, 0x00);
         break;
     default: //  for any other layers, or the default layer
         rgb_matrix_set_color_all (0xFF,  0xFF, 0xFF);
 	//rgb_matrix_mode(RGB_MATRIX_CYCLE_ALL);
         //override for the underglow
-        rgb_matrix_set_color(9, 0x00, 0xFF, 0x00);
-        rgb_matrix_set_color(10, 0x00, 0x00, 0xFF);
+        rgb_matrix_set_color(9, 0x00, 0xFF, 0xFF);
+        rgb_matrix_set_color(10, 0x00, 0x00, 0x00);
         break;
     }
   return state;
