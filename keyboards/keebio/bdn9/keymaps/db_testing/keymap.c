@@ -149,7 +149,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 // For key up
 void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
 	switch (keycode) {
-    case KC_F13 ... KC_F21:
+    case KC_A ... KC_F1:
         uint8_t layer = read_source_layers_cache(record->event.key);
         switch (layer) {
         case 3:
