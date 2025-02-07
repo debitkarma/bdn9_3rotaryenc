@@ -198,18 +198,21 @@ bool rgb_matrix_indicators_kb(void) {
 
 // RGB underglow for layer state
 layer_state_t layer_state_set_user(layer_state_t state) {
-    rgblight_set();
     switch (get_highest_layer(state)) {
     case 3:
+        rgb_matrix_mode(RGB_MATRIX_NONE);
         rgb_matrix_set_color_all (0x00,  0x00, 0xFF);
         break;
     case 2:
+        rgb_matrix_mode(RGB_MATRIX_NONE);
         rgb_matrix_set_color_all (0x00,  0xFF, 0x00);
         break;
     case 1:
+        rgb_matrix_mode(RGB_MATRIX_NONE);
         rgb_matrix_set_color_all (0xFF,  0x00, 0x00);
         break;
     default: //  for any other layers, or the default layer
+        rgb_matrix_mode(RGB_MATRIX_NONE);
         rgb_matrix_set_color_all (0xFF,  0xFF, 0xFF);
 	//rgb_matrix_mode(RGB_MATRIX_CYCLE_ALL);
         //override for the underglow
