@@ -72,6 +72,8 @@ void reset_to_zero(tap_dance_state_t *state, void *user_data) {
   if (state->count >= 3) {
     // Reset the keyboard to Layer 0 if more than 3 taps happen on a tapdance key
     reset_tap_dance(state);
+  } else if (state->count >= 5 && IS_LAYER_ON(3)) {
+    reset_keyboard();
   }
 }
 
@@ -196,6 +198,7 @@ bool rgb_matrix_indicators_kb(void) {
 
 // RGB underglow for layer state
 layer_state_t layer_state_set_user(layer_state_t state) {
+    rgblight_set();
     switch (get_highest_layer(state)) {
     case 3:
         rgb_matrix_set_color_all (0x00,  0x00, 0xFF);
