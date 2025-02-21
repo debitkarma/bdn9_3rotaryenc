@@ -93,7 +93,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT(
         KC_MUTE  , KC_HOME  , KC_END,
         TD(TD_L1), TD(TD_L2), TD(TD_L3),
-        EE_CLR   , QK_BOOT  , KC_X
+        KC_6   , QK_BOOT  , KC_X
     ),
     [1] = LAYOUT(
         KC_SPC       , KC_SPC   , KC_SPC,
@@ -195,30 +195,59 @@ bool rgb_matrix_indicators_kb(void) {
 }
 */
 
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    switch(get_highest_layer(layer_state|default_layer_state)) {
+        case 3:
+            RGB_MATRIX_INDICATOR_SET_COLOR(9, 0, 0, 255);
+            RGB_MATRIX_INDICATOR_SET_COLOR(9, 0, 0, 255);
+            break;
+        case 2:
+            RGB_MATRIX_INDICATOR_SET_COLOR(9, 0, 255, 0);
+            RGB_MATRIX_INDICATOR_SET_COLOR(9, 0, 255, 0);
+            break;
+        case 1:
+            RGB_MATRIX_INDICATOR_SET_COLOR(9, 255, 0, 0);
+            RGB_MATRIX_INDICATOR_SET_COLOR(9, 255, 0, 0);
+            break;
+        default:
+            RGB_MATRIX_INDICATOR_SET_COLOR(9, 255, 255, 255);
+            RGB_MATRIX_INDICATOR_SET_COLOR(9, 255, 255, 255);
+            break;
+    }
+    return false;
+}
 
 // RGB underglow for layer state
 layer_state_t layer_state_set_user(layer_state_t state) {
     //rgb_matrix_mode(RGB_MATRIX_NONE);
     switch (get_highest_layer(state)) {
     case 3:
-        rgb_matrix_mode(RGB_MATRIX_BREATHING);
+        rgb_matrix_mode(RGB_MATRIX_SOLID_COLOR);
+        rgb_matrix_sethsv_noeeprom(HSV_AZURE);
         //rgb_matrix_set_color_all (0x00,  0x00, 0xFF);
         break;
     case 2:
-        rgb_matrix_mode(RGB_MATRIX_PIXEL_RAIN);
+        rgb_matrix_mode(RGB_MATRIX_SOLID_COLOR);
+        rgb_matrix_sethsv_noeeprom(HSV_ORANGE);
+        //RGB_MATRIX_INDICATOR_SET_COLOR(9, 0x00, 0xFF, 0x00);
+        //RGB_MATRIX_INDICATOR_SET_COLOR(10, 0x00, 0xFF, 0x00);
+        //rgb_matrix_mode(RGB_MATRIX_PIXEL_RAIN);
         //rgb_matrix_set_color_all (0x00,  0xFF, 0x00);
         break;
     case 1:
         rgb_matrix_mode(RGB_MATRIX_SOLID_COLOR);
+        rgb_matrix_sethsv_noeeprom(HSV_PURPLE);
+        //RGB_MATRIX_INDICATOR_SET_COLOR(9, 0x00, 0x00, 0x00);
+        //RGB_MATRIX_INDICATOR_SET_COLOR(10, 0x00, 0x00, 0x00);
         //rgb_matrix_set_color_all (0xFF,  0x00, 0x00);
         break;
     default: //  for any other layers, or the default layer
         //rgb_matrix_mode(RGB_MATRIX_NONE);
         //rgb_matrix_set_color_all (0xFF,  0xFF, 0xFF);
 	    rgb_matrix_mode(RGB_MATRIX_CYCLE_ALL);
-        //override for the underglow
-        rgb_matrix_set_color(9, 0x00, 0xFF, 0xFF);
-        rgb_matrix_set_color(10, 0x00, 0x00, 0x00);
+        //override for the underglow - set in rgb_matrix_indicators_advanced_user above
+        //rgb_matrix_set_color(9, 0x00, 0xFF, 0xFF);
+        //rgb_matrix_set_color(10, 0x00, 0x00, 0x00);
         break;
     }
   return state;
