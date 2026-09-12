@@ -82,6 +82,8 @@ void reset_to_zero(tap_dance_state_t *state, void *user_data) {
         layer_move(0);
         reset_tap_dance(state);
     } else if (state->count == 2) {
+        layer_move(0);
+    } else if (state->count == 1) {
         tap_code(KC_0);
     }
 }
@@ -102,7 +104,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT(
         KC_MUTE  , KC_HOME  , KC_END,
         TD(TD_L1), TD(TD_L2), TD(TD_L3),
-        KC_6   , QK_BOOT  , KC_X
+        KC_6     , KC_W     , KC_X
     ),
     [1] = LAYOUT(
         KC_SPC       , KC_SPC   , KC_SPC,
@@ -115,7 +117,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_J    , KC_K            , KC_L
     ),
     [3] = LAYOUT(
-        KC_SCLN , KC_SCLN   , KC_SCLN  ,
+        KC_SCLN , KC_SCLN   , QK_BOOT  ,
         KC_M    , KC_N      , TD(TD_RESET),
         KC_P    , KC_Q      , KC_R
     ),
@@ -131,7 +133,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         switch (layer) {
         case 3:
             if (record->event.pressed) {
-            register_code(KC_Y);
+            register_code(KC_F24);
             f24_tracker++;
             tap_code(keycode);
             return false;
@@ -139,7 +141,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         case 2:
             if (record->event.pressed) {
-            register_code(KC_Z);
+            register_code(KC_F23);
             f23_tracker++;
             tap_code(keycode);
             return false;
@@ -167,7 +169,7 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (!record->event.pressed) {
                 f24_tracker--;
                 if (!f24_tracker) {
-                    unregister_code(KC_Y);
+                    unregister_code(KC_F24);
                 }
             }
             break;
@@ -175,7 +177,7 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (!record->event.pressed) {
                 f23_tracker--;
                 if (!f23_tracker) {
-                    unregister_code(KC_Z);
+                    unregister_code(KC_F23);
                 }
             }
             break;
