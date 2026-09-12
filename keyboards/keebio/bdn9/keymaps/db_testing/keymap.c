@@ -69,24 +69,33 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 
 // Reset to zero whenever tapping a lot in a row
 void reset_to_zero(tap_dance_state_t *state, void *user_data) {
-  if (state->count >= 3) {
-    // Reset the keyboard to Layer 0 if more than 3 taps happen on a tapdance key
-    reset_tap_dance(state);
-  } else if (state->count >= 5 && IS_LAYER_ON(3)) {
-    reset_keyboard();
-  }
+    // switch(get_highest_layer(layer_state|default_layer_state)) {
+    //     case 3:
+    //     case 2:
+    //     case 1:
+    //     default:
+    // }
+    if (state->count >= 7 && IS_LAYER_ON(3)) {
+        // Reset the keyboard to Layer 0 if more than 3 taps happen on a tapdance key
+        reset_keyboard();
+    } else if (state->count >= 3) {
+        layer_move(0);
+        reset_tap_dance(state);
+    } else if (state->count == 2) {
+        tap_code(KC_0);
+    }
 }
 
 // Tap Dance functions
 // defining tap dance actions prior to keymap
 tap_dance_action_t tap_dance_actions[] = {
-  [TD_L1] = ACTION_TAP_DANCE_LAYER_MOVE(KC_S, 1),
-  [TD_L2] = ACTION_TAP_DANCE_LAYER_MOVE(KC_T, 2),
-  [TD_L3] = ACTION_TAP_DANCE_LAYER_MOVE(KC_U, 3),
-  [L1_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_A, 0),
-  [L2_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_H, 0),
-  [L3_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_O, 0),
-  [TD_RESET] = ACTION_TAP_DANCE_FN(reset_to_zero)
+    [TD_L1] = ACTION_TAP_DANCE_LAYER_MOVE(KC_S, 1),
+    [TD_L2] = ACTION_TAP_DANCE_LAYER_MOVE(KC_T, 2),
+    [TD_L3] = ACTION_TAP_DANCE_LAYER_MOVE(KC_U, 3),
+    [L1_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_A, 0),
+    [L2_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_H, 0),
+    [L3_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_O, 0),
+    [TD_RESET] = ACTION_TAP_DANCE_FN(reset_to_zero)
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -107,7 +116,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
     [3] = LAYOUT(
         KC_SCLN , KC_SCLN   , KC_SCLN  ,
-        KC_M    , KC_N      , TD(L3_RESET),
+        KC_M    , KC_N      , TD(TD_RESET),
         KC_P    , KC_Q      , KC_R
     ),
 };
