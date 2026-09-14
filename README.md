@@ -183,7 +183,7 @@ TRY:
 * qmk functions should be using `rgb_matrix_*` functions (NOT `rgb_light_*` functions, even for the backlight)
 * LEDS are in a single matrix, addressed as 0-8 for the face keys, and 9, 10 for the underlighting
 
-#### Debugging
+#### Debugging (stale - see [Tap Dance Layer-Switch Bug](#tap-dance-layer-switch-bug-current-state) below)
 
 The `db_testing` keymap has `CONSOLE_ENABLE = yes` set in its `rules.mk`, and `keymap.c` has been instrumented to log to the QMK console (`qmk console` / `hid_listen`) via `uprintf()`:
 
@@ -193,7 +193,7 @@ The `db_testing` keymap has `CONSOLE_ENABLE = yes` set in its `rules.mk`, and `k
 
 This instrumentation is temporary/diagnostic - remove it (or drop `CONSOLE_ENABLE`) once the tap dance bug below is confirmed fixed on hardware.
 
-#### Bug: tap dance layer-switch key needs a "throwaway" tap
+#### Bug: tap dance layer-switch key needs a "throwaway" tap (stale - see [Tap Dance Layer-Switch Bug](#tap-dance-layer-switch-bug-current-state) below)
 
 **Symptom:** layer3key (row1/col2 - `TD_RESET` on layer 3, `TD_L3` on layer 0) tap-danced back to layer 0 correctly (2 taps on `TD_RESET`), but the very next isolated tap of that same physical key did nothing at all. A second isolated tap was needed before it would reliably send `KC_U` again.
 
@@ -220,6 +220,17 @@ Because of that, `TD_L3`'s own action state never receives its matching release 
 This isn't specific to `TD_L3`/`TD_RESET` - any dual-role tap dance whose layer-switch threshold can be reached while the key is still down will self-corrupt if a different tap-dance keycode occupies that same physical position on the destination layer (so `TD_L1`/`L1_RESET` and `TD_L2`/`L2_RESET` were presumably equally affected, just not manually verified the same way).
 
 **Fix applied:** in the custom `debug_dual_role_*` functions (userspace clones in `keymap.c` - not QMK core, so this is fully editable), moved the actual `layer_move()` call out of `on_each_tap` and into `on_reset`, keeping only `state->finished = true` in `on_each_tap`. This defers the layer switch until *after* this key's own release has already been dispatched (correctly, against the still-old layer), instead of racing it. Pending hardware re-test to confirm the fix.
+
+#### Tap Dance Layer-Switch Bug (current state)
+
+The two sections above are stale - they describe an earlier, disproven theory (release lookups aren't cached - they are) and an intermediate fix that turned out to only address part of the problem. The confirmed root cause, the full diagnostic log, the actual fix, and a general takeaway for future `ACTION_TAP_DANCE_FN` callbacks are written up in [`docs/tap-dance-layer-switch-bug.md`](docs/tap-dance-layer-switch-bug.md).
+
+Short version of where things landed, confirmed working on hardware:
+
+* `reset_to_zero`'s `count == 2` branch (`TD_RESET`, layer 3 → 0) calls `reset_tap_dance(state)` before `layer_move(0)`.
+* `TD_L3` (layer 0 → 3 - the pairing that actually races with `TD_RESET`) uses a custom `ACTION_TAP_DANCE_LAYER_MOVE_SAFE` macro that defers its `layer_move()` to `on_reset` instead of firing it inline from `on_each_tap`, reusing QMK's own `tap_dance_dual_role_finished`/`tap_dance_dual_role_t` unmodified.
+* `TD_L1`/`TD_L2`/`L1_RESET`/`L2_RESET`/`L3_RESET` are back on stock `ACTION_TAP_DANCE_LAYER_MOVE`, unchanged - they don't pair with any `ACTION_TAP_DANCE_FN`-driven layer change, so the bug doesn't apply to them, confirmed working as-is.
+* The diagnostic `uprintf`/`CONSOLE_ENABLE` instrumentation described above has been removed from `keymap.c`.
 
 #### Input Handling in AHK
 * AHK should handle F22/F23/F24 wrapped keys.
