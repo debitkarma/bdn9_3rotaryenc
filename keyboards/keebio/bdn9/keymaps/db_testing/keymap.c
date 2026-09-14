@@ -69,8 +69,6 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 
 // Reset to zero whenever tapping a lot in a row
 void reset_to_zero(tap_dance_state_t *state, void *user_data) {
-    uprintf("[TD_RESET] finished count=%u pressed=%u interrupted=%u t=%lu\n",
-            state->count, state->pressed, state->interrupted, timer_read32());
     // switch(get_highest_layer(layer_state|default_layer_state)) {
     //     case 3:
     //     case 2:
@@ -79,78 +77,77 @@ void reset_to_zero(tap_dance_state_t *state, void *user_data) {
     // }
     if (state->count >= 7 && IS_LAYER_ON(3)) {
         // Reset the keyboard to Layer 0 if more than 3 taps happen on a tapdance key
+        rgb_matrix_mode(RGB_MATRIX_CYCLE_ALL);
         reset_keyboard();
     } else if (state->count >= 3) {
         layer_move(0);
         reset_tap_dance(state);
     } else if (state->count == 2) {
+        reset_tap_dance(state);
         layer_move(0);
     } else if (state->count == 1) {
         tap_code(KC_0);
     }
 }
 
-// Debug-instrumented clone of the built-in ACTION_TAP_DANCE_LAYER_MOVE dual-role
-// behavior (see process_tap_dance.c: tap_dance_dual_role_*), tagged with a name
-// so we can tell which tap-dance key produced which log line.
-typedef struct {
-    tap_dance_dual_role_t base;
-    const char *name;
-} debug_dual_role_t;
-
-// NOTE: the layer switch used to happen here, inline, at count==2. That runs
-// the layer_move() *while the 2nd tap's key is still physically held down*,
-// so when the key is released, QMK re-looks-up the keycode for the release
-// event against the *new* layer (release lookups aren't cached from press
-// time) and can route it to a totally different tap-dance action sitting at
-// the same physical position on the destination layer. That left this
-// action's own state stuck (never reset), corrupting the next tap. Deferring
-// the layer_move() to on_reset (below) means it only happens after this
-// key's own release has already been dispatched against the still-old layer.
-void debug_dual_role_each_tap(tap_dance_state_t *state, void *user_data) {
-    debug_dual_role_t *d = (debug_dual_role_t *)user_data;
-    uprintf("[%s] each_tap count=%u pressed=%u interrupted=%u t=%lu\n",
-            d->name, state->count, state->pressed, state->interrupted, timer_read32());
+// TD_L1/TD_L2/TD_L3/L1_RESET/L2_RESET/L3_RESET keep the stock
+// ACTION_TAP_DANCE_LAYER_MOVE behavior (send kc on 1 tap, layer_move on 2
+// taps) - but stock's on_each_tap calls layer_move() inline, while the 2nd
+// tap's key is still being processed as part of *this* press event. Since
+// process_tap_dance() always returns true, this same press event always
+// falls through afterward to the standard action system's
+// store_or_get_action(), which re-caches whatever layer is active *at that
+// point* for this matrix position. If we've already switched layers by
+// then - no matter how, or in what order, inside on_each_tap - that call
+// clobbers the correct press-time cache entry. The next release then gets
+// looked up against the wrong layer and can resolve to an unrelated key
+// sharing this matrix position (see README "Bug: tap dance layer-switch key
+// needs a throwaway tap").
+//
+// So the layer switch itself cannot happen inside on_each_tap at all - it
+// has to wait until *this key's own release*, which is a separate, later
+// event: releases only *read* the layer cache, never write it, so nothing
+// clobbers it afterward. on_reset (called right after that release, once
+// the dance is finished) is the right place. That means on_each_tap only
+// marks the dance finished (no layer_move here), and on_reset is where the
+// deferred layer_move() actually happens - tap_dance_dual_role_finished
+// (QMK's own, process_tap_dance.h) is still reused unmodified for the
+// count==1 case.
+void safe_dual_role_each_tap(tap_dance_state_t *state, void *user_data) {
     if (state->count == 2) {
         state->finished = true;
     }
 }
 
-void debug_dual_role_finished(tap_dance_state_t *state, void *user_data) {
-    debug_dual_role_t *d = (debug_dual_role_t *)user_data;
-    uprintf("[%s] finished count=%u pressed=%u interrupted=%u t=%lu\n",
-            d->name, state->count, state->pressed, state->interrupted, timer_read32());
-    if (state->count == 1) {
-        register_code16(d->base.kc);
-    }
-}
-
-void debug_dual_role_reset(tap_dance_state_t *state, void *user_data) {
-    debug_dual_role_t *d = (debug_dual_role_t *)user_data;
-    uprintf("[%s] reset count=%u t=%lu\n", d->name, state->count, timer_read32());
+void safe_dual_role_reset(tap_dance_state_t *state, void *user_data) {
+    tap_dance_dual_role_t *pair = (tap_dance_dual_role_t *)user_data;
     if (state->count == 1) {
         wait_ms(TAP_CODE_DELAY);
-        unregister_code16(d->base.kc);
+        unregister_code16(pair->kc);
     } else if (state->count == 2) {
-        d->base.layer_function(d->base.layer);
+        layer_move(pair->layer);
     }
 }
 
-#define ACTION_TAP_DANCE_LAYER_MOVE_DEBUG(dbg_name, kc, layer)                                              \
-    {                                                                                                        \
-        .fn = {debug_dual_role_each_tap, debug_dual_role_finished, debug_dual_role_reset, NULL},             \
-        .user_data = (void *)&((debug_dual_role_t){{kc, layer, layer_move}, dbg_name}),                      \
+#define ACTION_TAP_DANCE_LAYER_MOVE_SAFE(kc, layer)                                              \
+    {                                                                                             \
+        .fn = {safe_dual_role_each_tap, tap_dance_dual_role_finished, safe_dual_role_reset, NULL}, \
+        .user_data = (void *)&((tap_dance_dual_role_t){kc, layer, layer_move}),                   \
     }
 
 // Tap Dance functions
 // defining tap dance actions prior to keymap
+// Only TD_L3 (pairs with TD_RESET/reset_to_zero on layer 3) uses the safe,
+// custom each_tap/reset fix above. TD_L1/TD_L2/L1_RESET/L2_RESET/L3_RESET
+// stay on stock ACTION_TAP_DANCE_LAYER_MOVE - they don't pair with any
+// ACTION_TAP_DANCE_FN-driven layer change, so the bug doesn't apply to them.
 tap_dance_action_t tap_dance_actions[] = {
-    [TD_L1] = ACTION_TAP_DANCE_LAYER_MOVE_DEBUG("TD_L1", KC_S, 1),
-    [TD_L2] = ACTION_TAP_DANCE_LAYER_MOVE_DEBUG("TD_L2", KC_T, 2),
-    [TD_L3] = ACTION_TAP_DANCE_LAYER_MOVE_DEBUG("TD_L3", KC_U, 3),
-    [L1_RESET] = ACTION_TAP_DANCE_LAYER_MOVE_DEBUG("L1_RESET", KC_A, 0),
-    [L2_RESET] = ACTION_TAP_DANCE_LAYER_MOVE_DEBUG("L2_RESET", KC_H, 0),
-    [L3_RESET] = ACTION_TAP_DANCE_LAYER_MOVE_DEBUG("L3_RESET", KC_O, 0),
+    [TD_L1] = ACTION_TAP_DANCE_LAYER_MOVE(KC_S, 1),
+    [TD_L2] = ACTION_TAP_DANCE_LAYER_MOVE(KC_T, 2),
+    [TD_L3] = ACTION_TAP_DANCE_LAYER_MOVE_SAFE(KC_U, 3),
+    [L1_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_A, 0),
+    [L2_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_H, 0),
+    [L3_RESET] = ACTION_TAP_DANCE_LAYER_MOVE(KC_O, 0),
     [TD_RESET] = ACTION_TAP_DANCE_FN(reset_to_zero)
 };
 
@@ -180,9 +177,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // F-key wrapping functionality
 // On key down
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    uprintf("[PRU] kc=0x%04X row=%u col=%u pressed=%u layer=%u t=%lu\n",
-            keycode, record->event.key.row, record->event.key.col,
-            record->event.pressed, get_highest_layer(layer_state), timer_read32());
     switch (keycode) {
     case KC_A ... KC_F1:
         // grab layer from the key event
