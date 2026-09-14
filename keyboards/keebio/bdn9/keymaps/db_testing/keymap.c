@@ -76,12 +76,12 @@ void reset_to_zero(tap_dance_state_t *state, void *user_data) {
     //     default:
     // }
     if (state->count >= 7 && IS_LAYER_ON(3)) {
-        // Reset the keyboard to Layer 0 if more than 3 taps happen on a tapdance key
-        rgb_matrix_mode(RGB_MATRIX_CYCLE_ALL);
+        // Set board to reset/flash if more than 7 taps happen on a tapdance key
         reset_keyboard();
     } else if (state->count >= 3) {
-        layer_move(0);
+        // Reset the keyboard to Layer 0 if more than 3 taps happen on a tapdance key
         reset_tap_dance(state);
+        layer_move(0);
     } else if (state->count == 2) {
         reset_tap_dance(state);
         layer_move(0);
@@ -284,16 +284,16 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     //rgb_matrix_mode(RGB_MATRIX_NONE);
     switch (get_highest_layer(state)) {
     case 3:
-        rgb_matrix_mode(RGB_MATRIX_SOLID_COLOR);
+        rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
         rgb_matrix_sethsv_noeeprom(HSV_SPRINGGREEN);
         break;
     case 2:
-        rgb_matrix_mode(RGB_MATRIX_SOLID_COLOR);
+        rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
         rgb_matrix_sethsv_noeeprom(HSV_ORANGE);
         //rgb_matrix_mode(RGB_MATRIX_PIXEL_RAIN);
         break;
     case 1:
-        rgb_matrix_mode(RGB_MATRIX_SOLID_COLOR);
+        rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
         rgb_matrix_sethsv_noeeprom(HSV_PURPLE);
 
         break;
@@ -301,12 +301,46 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         //rgb_matrix_mode(RGB_MATRIX_NONE);
         //rgb_matrix_set_color_all (0xFF,  0xFF, 0xFF);
 	    //rgb_matrix_mode(RGB_MATRIX_CYCLE_ALL);
-        rgb_matrix_mode(RGB_MATRIX_PIXEL_RAIN);
+        rgb_matrix_mode_noeeprom(RGB_MATRIX_PIXEL_RAIN);
         //override for the underglow - set in rgb_matrix_indicators_advanced_user above
         break;
     }
   return state;
 };
+
+// set on-boot layer and lighting mode:
+void keyboard_post_init_user(void) {
+    // Force the keyboard to start on Layer 0
+    layer_move(0);
+
+    // Force the RGB matrix into Pixel Rain on boot without overwriting EEPROM
+    rgb_matrix_mode_noeeprom(RGB_MATRIX_PIXEL_RAIN);
+}
+
+// RGB Lighting state for switching to bootloader
+bool shutdown_user(bool jump_to_bootloader) {
+    if (jump_to_bootloader) {
+        // CHANGE KEY BACKLIGHTING
+        // these don't work because the "frame" doesn't advance, so these never get set
+        // rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
+        // rgb_matrix_sethsv_noeeprom(HSV_WHITE);
+
+        for (int i = 0; i < RGB_MATRIX_LED_COUNT-2; i++) {
+            rgb_matrix_set_color(i, 50, 50, 50);
+        }
+        // CHANGE INDICATOR LIGHTING
+        // RGB_MATRIX_INDICATOR_SET_COLOR(9, 50, 50, 50);
+        // the above function doesn't work outside of rgb_matrix_indicators_advanced_user
+        // manually set them directly:
+        rgb_matrix_set_color(9, 10, 10, 10);
+        rgb_matrix_set_color(10, 10, 10, 10);
+        // FORCE the RGB Matrix driver to push these values to the LEDs IMMEDIATELY
+        rgb_matrix_update_pwm_buffers();
+        // Disables the RGB matrix cleanly without saving the state
+        // rgb_matrix_disable_noeeprom(); 
+    }
+    return true; // Return true to allow the shutdown sequence to continue
+}
 
 // Blocking out original encoder functionality
 // Keeping it for reference
